@@ -3,12 +3,12 @@
   "$schema": "http://json-schema.org/draft-06/schema#",
   "type": "object",
   "properties": {
-    "testes": {
+    "test": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "nome": {
+          "name": {
             "type": "string"
           },
           "url": {
@@ -16,7 +16,7 @@
           }
         },
         "required": [
-          "nome",
+          "name",
           "url"
         ],
         "additionalProperties": false
@@ -24,7 +24,7 @@
     }
   },
   "required": [
-    "testes"
+    "test"
   ],
   "additionalProperties": false
 }
