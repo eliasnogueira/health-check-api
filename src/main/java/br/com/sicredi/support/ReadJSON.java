@@ -18,12 +18,12 @@ public class ReadJSON {
 
         List<Object[]> dados = new ArrayList<Object[]>();
 
-        JSONArray testes = (JSONArray) jsonObject.get("testes");
+        JSONArray testes = (JSONArray) jsonObject.get("tests");
 
         for (int i = 0; i < testes.size(); i++) {
             String[] informacoes = new String[2];
             JSONObject obj = (JSONObject) testes.get(i);
-            informacoes[0] = obj.get("nome").toString();
+            informacoes[0] = obj.get("name").toString();
             informacoes[1] = obj.get("url").toString();
             dados.add(informacoes);
         }
