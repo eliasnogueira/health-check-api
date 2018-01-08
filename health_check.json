@@ -1,0 +1,17 @@
+{
+  "testes":
+  [
+    {
+      "nome": "Postman - GET",
+      "url": "https://postman-echo.com/get?test=123"
+    },
+    {
+      "nome": "Postman - 401",
+      "url": "https://postman-echo.com/digest-auth"
+    },
+    {
+      "nome": "Correios - SOAP",
+      "url": "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx"
+    }
+  ]
+}
