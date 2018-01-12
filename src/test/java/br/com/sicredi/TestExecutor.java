@@ -1,7 +1,12 @@
 package br.com.sicredi;
 
 import br.com.sicredi.support.ReadJSON;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -9,6 +14,7 @@ import org.junit.runners.Parameterized;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -21,23 +27,59 @@ import static junit.framework.TestCase.assertTrue;
 @RunWith(Parameterized.class)
 public class TestExecutor {
 
-    @Parameterized.Parameter public String nome;
+    @Parameterized.Parameter public String name;
     @Parameterized.Parameter(1) public String url;
+
+    private static ExtentReports extentReports;
+    private static ExtentHtmlReporter htmlReporter;
+    private static ExtentTest testReport;
+    private boolean testStatus;
+    private String errorMessage;
+    private static long connectionTimeout = 0;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() throws Exception {
         return ReadJSON.read();
     }
 
+    @BeforeClass
+    public static void setup() {
+        ReadJSON.createReportDir();
+        htmlReporter = new ExtentHtmlReporter("target/report/" + ReadJSON.getFileName() + ".html");
+        extentReports = new ExtentReports();
+
+        extentReports.attachReporter(htmlReporter);
+
+        connectionTimeout = setConnectionTimeout();
+    }
+
     @Test
     public void healthCheckStatus() {
+        testReport = extentReports.createTest(name);
+
         try {
             assertTrue(healthCheckStatus(url));
+            testStatus = true;
+
         } catch (Throwable e) {
             // in the case of json validator throws an exception
-            TestCase.fail(e.getMessage());
-        }
+            errorMessage = e.getMessage().toString();
+            TestCase.fail(errorMessage);
+            testStatus = false;
 
+        } finally {
+            if (testStatus) {
+                testReport.pass(url);
+            } else {
+                testReport.fail("<b>URL: </b>" + url + "<br>" +
+                    "<b>Exception: </b>" + errorMessage);
+            }
+        }
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        extentReports.flush();
     }
 
     /**
@@ -53,7 +95,9 @@ public class TestExecutor {
 
         http = (HttpURLConnection) new URL(url).openConnection();
         http.setRequestMethod("GET");
+        http.setConnectTimeout((int)connectionTimeout);
         http.connect();
+
         statusCode = http.getResponseCode();
 
         if (statusCode != 404 || statusCode != 500) {
@@ -62,7 +106,23 @@ public class TestExecutor {
             status = false;
         }
 
+        System.out.println("nome = " + name);
+        System.out.println("url = " + url);
+        System.out.println("-----");
         return status;
+    }
+
+    private static long setConnectionTimeout() {
+        long connectionTimeoutParameter = 0;
+
+        if(System.getProperty("timeout") == null) {
+
+            connectionTimeoutParameter = 10000;
+        } else {
+            connectionTimeoutParameter = TimeUnit.SECONDS.toMillis(Integer.parseInt(System.getProperty("timeout")));
+        }
+
+        return connectionTimeoutParameter;
     }
 }
 

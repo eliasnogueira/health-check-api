@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,10 @@ import java.util.List;
  * @author Elias Nogueira, Gregory Severo
  */
 public class ReadJSON {
+
+    //private static FileReader healthCheck;
+
+    private static String healthCheck;
 
     /**
      * Read the json file and transform it on an array of object
@@ -30,7 +35,8 @@ public class ReadJSON {
 
         if (validaSchemaJSON()) {
             JSONParser parser = new JSONParser();
-            Object file = parser.parse(healthCheckFile(fileFromMavenProperty));
+            //Object file = parser.parse(healthCheckFile(fileFromMavenProperty));
+            Object file = parser.parse(new FileReader(healthCheckFile(fileFromMavenProperty)));
             JSONObject jsonObject = (JSONObject) file;
             JSONArray tests = (JSONArray) jsonObject.get("test");
 
@@ -78,15 +84,22 @@ public class ReadJSON {
      * @return the proper health_check file
      * @throws Exception
      */
-    private static FileReader healthCheckFile(String file) throws Exception {
-        FileReader healthCheck;
+    private static String healthCheckFile(String file) throws Exception {
 
         if (file == null) {
-            healthCheck = new FileReader("health_check.json");
+            healthCheck = "health_check.json";
         } else {
-            healthCheck = new FileReader(file);
+            healthCheck = file;
         }
 
         return healthCheck;
+    }
+
+    public static String getFileName() {
+        return healthCheck.replace(".json", "");
+    }
+
+    public static void createReportDir() {
+        new File("target/report").mkdir();
     }
 }

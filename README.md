@@ -39,17 +39,12 @@ Examples:
 We recommend you to execute the following command on the project folder:
 
 ```bash
-mvn test surefire-report:report-only site -DgenerateReports=false
+mvn clean test 
 ```
-
-This command will:
- 1. Execute the test _TestExecutor.java_ that is a Data Driven Test and will read the _health_check.json_ file and verify if the endpoint is alive
- 2. Generate the xUnit report (XML file)
- 3. Generate a HTML report (user friendly report) based on xUnit XML
  
 The xUnit report will be generated on _target/surefire-reports_ folder.
 
-The HTML report will be generated on _target/site/surefire-report.html_.
+The HTML report will be generated on _target/report/_. The filename will be the same of json filename.
 
 ### multiple health check files
 If you need to create many health check files to run against dev, test and other environments 
@@ -61,13 +56,23 @@ you need to use `-Dfile=filename.json` where:
 Example:
 
 ```bash
-mvn test -Dfile=health_check_dev.json surefire-report:report-only site -DgenerateReports=false
+mvn clean test -Dfile=health_check_dev.json
 ```
 
 As this project only execute one file per time, you'll need multiple executions.
  
+ 
+### timeout
+The default timeout is 10 seconds.
 
-### Test pipelime
+If you want to add a custom timeout used `-Dtimeout` property.
+
+Eg: custom timeout with 5 seconds
+```bash
+mvn clean test -Dtimeout=5
+```
+
+### Test pipeline
 We recommend you execute via command line or integrate the project on a build pipeline.
 Here's an example of a pipeline with only a health check file (_health_check.json_):
 
@@ -91,9 +96,9 @@ node {
    }
    stage('Health Check') {
       if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' test surefire-report:report-only site -DgenerateReports=false"
+         sh "'${mvnHome}/bin/mvn' clean test"
       } else {
-         bat(/"${mvnHome}\bin\mvn" test surefire-report:report-only site -DgenerateReports=false/)
+         bat(/"${mvnHome}\bin\mvn" clean test/)
       }
    }
    stage('Results') {
@@ -119,17 +124,17 @@ node {
 
    stage('Health Check - Dev') {
       if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' test surefire-report:report-only site -DgenerateReports=false"
+         sh "'${mvnHome}/bin/mvn' clean test"
       } else {
-         bat(/"${mvnHome}\bin\mvn" test surefire-report:report-only site -DgenerateReports=false/)
+         bat(/"${mvnHome}\bin\mvn" clean test/)
       }
    }
    
    stage('Health Check - Test') {
       if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' test -file=health_check_test.json surefire-report:report-only site -DgenerateReports=false"
+         sh "'${mvnHome}/bin/mvn' clean test -file=health_check_test.json"
       } else {
-         bat(/"${mvnHome}\bin\mvn" test -file=health_check_test.json surefire-report:report-only site -DgenerateReports=false/)
+         bat(/"${mvnHome}\bin\mvn" clean test -file=health_check_test.json/)
       }
    }
    
