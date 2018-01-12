@@ -41,11 +41,28 @@ We recommend you to execute the following command on the project folder:
 ```bash
 mvn clean test 
 ```
+
+### reports
+There are two types of report that will be always generated:
+ * xUnit: report will be generated on _target/surefire-reports_ folder.
+ * HTML: report will be generated on _target/report/_. The filename will be the same of json filename.
+
+If you want to aggregate the HTML report on the build pipeline you need:
+ 1. Install the [HTML Publish Plugin](https://jenkins.io/blog/2016/07/01/html-publisher-plugin/) on Jenkins
+ 2. Add the following code on Jenkins -> Manage Jenkins -> Script Console to allow Javascript and CSS to be load
+ `System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")`
+ 3. Add the _publishReport_ DSL on your build pipeline
+ ```
+ publishHTML (target: [
+    allowMissing: false,
+    alwaysLinkToLastBuild: true,
+    keepAll: true,
+    reportDir: 'target/report',
+    reportFiles: 'health_check*.html',
+    reportName: "Health Check HTML Report"
+ ])
+ ```
  
-The xUnit report will be generated on _target/surefire-reports_ folder.
-
-The HTML report will be generated on _target/report/_. The filename will be the same of json filename.
-
 ### multiple health check files
 If you need to create many health check files to run against dev, test and other environments 
 you need to use `-Dfile=filename.json` where:
