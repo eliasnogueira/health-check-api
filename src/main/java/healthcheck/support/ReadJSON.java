@@ -1,4 +1,4 @@
-package br.com.sicredi.support;
+package healthcheck.support;
 
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.report.ProcessingReport;

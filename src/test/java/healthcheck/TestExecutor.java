@@ -1,6 +1,6 @@
-package br.com.sicredi;
+package healthcheck;
 
-import br.com.sicredi.support.ReadJSON;
+import healthcheck.support.ReadJSON;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
