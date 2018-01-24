@@ -116,10 +116,10 @@ public class TestExecutor {
 
         statusCode = http.getResponseCode();
 
-        if (statusCode != 404 || statusCode != 500) {
-            status = true;
-        } else {
+        if (statusCode == 404 || statusCode == 500) {
             status = false;
+        } else {
+            status = true;
         }
 
         System.out.println("nome = " + name);
