@@ -89,6 +89,12 @@ Eg: custom timeout with 5 seconds
 mvn clean test -Dtimeout=5
 ```
 
+### proxy
+If you are behind a proxy server (probably in a corporate environment) you can set the proxy thought _conf.properties_ file.
+
+Change _http.useProxy_ to true and add the proxy URL and port.
+
+
 ### Test pipeline
 We recommend you execute via command line or integrate the project on a build pipeline.
 Here's an example of a pipeline with only a health check file (_health_check.json_):

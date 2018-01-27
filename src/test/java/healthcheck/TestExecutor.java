@@ -109,7 +109,7 @@ public class TestExecutor {
         boolean status;
         HttpURLConnection http;
 
-        if (Boolean.parseBoolean(ReadConfFile.returnValue("http.setProxy"))) {
+        if (Boolean.parseBoolean(ReadConfFile.returnValue("http.useProxy"))) {
             setProxy();
         }
 
