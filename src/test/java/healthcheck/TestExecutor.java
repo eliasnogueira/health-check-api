@@ -108,7 +108,6 @@ public class TestExecutor {
     private boolean healthCheckStatus(String url) throws Exception {
         boolean status;
         HttpURLConnection http;
-        int statusCode;
 
         if (Boolean.parseBoolean(ReadConfFile.returnValue("http.setProxy"))) {
             setProxy();
@@ -119,9 +118,7 @@ public class TestExecutor {
         http.setConnectTimeout((int)connectionTimeout);
         http.connect();
 
-        statusCode = http.getResponseCode();
-
-        if (statusCode == 404 || statusCode == 500) {
+        if (!isServerResponding(http.getResponseCode())) {
             status = false;
         } else {
             status = true;
@@ -144,6 +141,19 @@ public class TestExecutor {
         }
 
         return connectionTimeoutParameter;
+    }
+
+    private boolean isServerResponding(int statusCode) throws Exception {
+        int[] listOfStatusCode = {404, 408, 410, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511};
+        boolean status = true;
+
+        for (int i = 0; i < listOfStatusCode.length; i++) {
+            if (statusCode == listOfStatusCode[i]) {
+                throw new Exception("HTTP Status: " + statusCode);
+            }
+        }
+
+        return status;
     }
 
     private static void setProxy() {
