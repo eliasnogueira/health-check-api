@@ -16,6 +16,7 @@
 
 package healthcheck;
 
+import healthcheck.support.ReadConfFile;
 import healthcheck.support.ReadJSON;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
@@ -107,7 +108,11 @@ public class TestExecutor {
     private boolean healthCheckStatus(String url) throws Exception {
         boolean status;
         HttpURLConnection http;
-        int statusCode = 0;
+        int statusCode;
+
+        if (Boolean.parseBoolean(ReadConfFile.returnValue("http.setProxy"))) {
+            setProxy();
+        }
 
         http = (HttpURLConnection) new URL(url).openConnection();
         http.setRequestMethod("GET");
@@ -122,14 +127,14 @@ public class TestExecutor {
             status = true;
         }
 
-        System.out.println("nome = " + name);
+        System.out.println("name = " + name);
         System.out.println("url = " + url);
         System.out.println("-----");
         return status;
     }
 
     private static long setConnectionTimeout() {
-        long connectionTimeoutParameter = 0;
+        long connectionTimeoutParameter;
 
         if(System.getProperty("timeout") == null) {
 
@@ -139,6 +144,13 @@ public class TestExecutor {
         }
 
         return connectionTimeoutParameter;
+    }
+
+    private static void setProxy() {
+        System.setProperty("http.proxyHost", ReadConfFile.returnValue("http.proxyHost"));
+        System.setProperty("http.proxyPort", ReadConfFile.returnValue("http.proxyPort"));
+        System.setProperty("https.proxyHost", ReadConfFile.returnValue("https.proxyHost"));
+        System.setProperty("https.proxyPort", ReadConfFile.returnValue("https.proxyPort"));
     }
 }
 
